@@ -1,14 +1,32 @@
 {
   "name": "follow-xrefs",
-  "displayName": "follow-xrefs",
+  "displayName": "Follow MDN slugs",
+  "publisher": "bsmth",
   "description": "Jump to documents in VS Code based on MDN slugs",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bsmth/follow-xrefs"
+  },
+  "bugs": {
+    "url": "https://github.com/bsmth/follow-xrefs/issues"
+  },
   "engines": {
     "vscode": "^1.96.0"
   },
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "MDN Web Docs",
+    "Markdown",
+    "Documentation"
+  ],
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "vsce": {
+    "yarn": false
+  },
+  "pricing": "Free",
   "activationEvents": [],
   "main": "./extension.js",
   "contributes": {
@@ -22,14 +40,16 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "deploy": "vsce publish"
   },
   "devDependencies": {
-    "@types/vscode": "^1.96.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
-    "eslint": "^9.16.0",
+    "@types/vscode": "^1.96.0",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.2.1",
+    "eslint": "^9.16.0"
   }
 }
