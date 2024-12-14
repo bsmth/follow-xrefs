@@ -1,3 +1,6 @@
+.vscode-test/
+*.vsix
+
 # Logs
 logs
 *.log
