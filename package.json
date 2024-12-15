@@ -3,7 +3,7 @@
   "displayName": "Follow MDN slugs",
   "publisher": "bsmth",
   "description": "Jump to documents in VS Code based on MDN slugs",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/bsmth/follow-xrefs"
