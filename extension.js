@@ -4,7 +4,7 @@ const { scanMarkdownFiles } = require("./src/indexSlugs.js");
 const { regexBuilder } = require("./src/utils/regexBuilder.js");
 
 // We may modify later
-let FileAndSlugMap = new Map();
+let slugToFileMap = new Map();
 
 const locale = "en-US";
 const localeString = `/${locale}/docs/`;
@@ -22,13 +22,28 @@ async function activate(context) {
   const scanCommand = vscode.commands.registerCommand(
     "follow-xrefs.scanFiles",
     async () => {
-      vscode.window.showInformationMessage(`Indexing markdown files…`);
-      FileAndSlugMap = await scanMarkdownFiles();
-
-      // TODO: can we show a progress bar?
-      vscode.window.showInformationMessage(
-        `${FileAndSlugMap.size} files indexed.`,
+      // create a new status bar item that we can now manage
+      let status = vscode.window.createStatusBarItem(
+        vscode.StatusBarAlignment.Left,
+        1,
       );
+      // Show a spinner
+      status.text = `$(sync~spin) Indexing MDN slugs…`;
+      status.backgroundColor = new vscode.ThemeColor(
+        "statusBar.debuggingBackground",
+      );
+      status.color = new vscode.ThemeColor("statusBar.debuggingForeground");
+      status.tooltip =
+        "A map of files by slug allows 'Jump to file' in Markdown links.";
+      status.show();
+
+      // Actually index
+      slugToFileMap = await scanMarkdownFiles();
+
+      status.backgroundColor = new vscode.ThemeColor("statusBar.background");
+      status.color = new vscode.ThemeColor("statusBar.foreground");
+      status.text = `$(check) Indexed ${slugToFileMap.size} MDN slugs!`;
+      // status.hide();
     },
   );
 
@@ -44,7 +59,7 @@ async function activate(context) {
 
         // We want the group right after the `localeString`
         const slug = match[2];
-        const filePath = FileAndSlugMap.get(slug);
+        const filePath = slugToFileMap.get(slug);
         // console.log(slug, filePath);
         if (!filePath) return;
 
@@ -91,7 +106,7 @@ async function activate(context) {
           return;
         }
 
-        const completions = Array.from(FileAndSlugMap.keys()).map((slug) => {
+        const completions = Array.from(slugToFileMap.keys()).map((slug) => {
           const item = new vscode.CompletionItem(
             slug,
             vscode.CompletionItemKind.Reference,
