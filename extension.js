@@ -1,20 +1,16 @@
 const vscode = require("vscode");
 const { scanMarkdownFiles } = require("./src/indexSlugs.js");
 
+const { regexBuilder } = require("./src/utils/regexBuilder.js");
+
 // We may modify later
 let FileAndSlugMap = new Map();
 
-// step 1 for making this locale-independent
-// Not sure how to make this user-configurable
-// or what it would look like
 const locale = "en-US";
 const localeString = `/${locale}/docs/`;
 
-// Create a regex with a template literal for the locale
-// Group 2 is the slug after ${localeString}
-// Group 3 is the hash / URL fragment after the slug
-// We're ignoring #fragments for now
-const xrefRegex = new RegExp(`\\[.*?\\]\\((${localeString}(.+?)(#.*)?)\\)`);
+// regex to match slugs
+const regex = regexBuilder(locale);
 
 /**
  * @param {{ subscriptions: vscode.Disposable[]; }} context
@@ -31,9 +27,9 @@ async function activate(context) {
 
       // TODO: can we show a progress bar?
       vscode.window.showInformationMessage(
-        `${FileAndSlugMap.size} files indexed.`
+        `${FileAndSlugMap.size} files indexed.`,
       );
-    }
+    },
   );
 
   const markdownHoverProvider = vscode.languages.registerHoverProvider(
@@ -41,9 +37,9 @@ async function activate(context) {
     {
       provideHover(document, position) {
         // Match Markdown links like [...](slug)
-        const range = document.getWordRangeAtPosition(position, xrefRegex);
+        const range = document.getWordRangeAtPosition(position, regex);
         if (!range) return;
-        const match = document.getText(range).match(xrefRegex);
+        const match = document.getText(range).match(regex);
         if (!match) return;
 
         // We want the group right after the `localeString`
@@ -59,14 +55,14 @@ async function activate(context) {
           //    It looks better to say "Jump to file" for now.
           // 2. I'm not sure if there's a better alternative to encodeURIComponent
           `[Jump to file](command:follow-xrefs.openFile?${encodeURIComponent(
-            JSON.stringify(fileUri)
-          )})`
+            JSON.stringify(fileUri),
+          )})`,
         );
         // We trust the input in this case
         markdownString.isTrusted = true;
         return new vscode.Hover(markdownString);
       },
-    }
+    },
   );
   // Open the file based on the encodeURIComponent
   const openFileCommand = vscode.commands.registerCommand(
@@ -75,7 +71,7 @@ async function activate(context) {
       if (fileUri) {
         vscode.window.showTextDocument(vscode.Uri.parse(fileUri));
       }
-    }
+    },
   );
 
   // We can also add completions based on the map!
@@ -98,7 +94,7 @@ async function activate(context) {
         const completions = Array.from(FileAndSlugMap.keys()).map((slug) => {
           const item = new vscode.CompletionItem(
             slug,
-            vscode.CompletionItemKind.Reference
+            vscode.CompletionItemKind.Reference,
           );
           // remove the first `/` seeing as we've just typed it
           item.insertText = localeString.substring(1) + slug;
@@ -113,14 +109,14 @@ async function activate(context) {
     // even desired.
 
     // Trigger completion with `/`
-    "/"
+    "/",
   );
 
   context.subscriptions.push(
     scanCommand,
     markdownHoverProvider,
     openFileCommand,
-    completionProvider
+    completionProvider,
   );
 }
 
