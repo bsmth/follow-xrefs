@@ -16,7 +16,7 @@ jobs:
       - name: Checkout repository
         with:
           persist-credentials: false
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Release Please
         uses: GoogleCloudPlatform/release-please-action@v4
