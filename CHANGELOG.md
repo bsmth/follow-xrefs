@@ -4,6 +4,13 @@ All notable changes to the "follow-xrefs" extension will be documented in this f
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.2.0](https://github.com/bsmth/follow-xrefs/compare/v1.1.0...v1.2.0) (2026-07-29)
+
+
+### Features
+
+* add automerge ([#54](https://github.com/bsmth/follow-xrefs/issues/54)) ([4f532b2](https://github.com/bsmth/follow-xrefs/commit/4f532b2eb2dfdac6ca8dc52aaeecca7199ad4bff))
+
 ## [1.1.0](https://github.com/bsmth/follow-xrefs/compare/v1.0.1...v1.1.0) (2025-09-26)
 
 
